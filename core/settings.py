@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env.development.local'))
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-fallback-key')
-DEBUG = True
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-fallback-key')
+DEBUG = os.environ.get('DEBUG', 'False').upper() == 'TRUE'
+ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1', 'localhost']
 POSTGRES_URL = os.environ.get('POSTGRES_URL')
-
 if POSTGRES_URL:
     DATABASES = {
         'default': dj_database_url.config(
@@ -25,21 +25,19 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1', 'localhost']
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'news',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -47,13 +45,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 ROOT_URLCONF = 'core.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,38 +61,17 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = 'core.wsgi.app'
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('POSTGRES_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
 }
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
+WSGI_APPLICATION = 'core.wsgi.app'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
