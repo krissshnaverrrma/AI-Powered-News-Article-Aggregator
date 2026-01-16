@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-fallback-key')
 DEBUG = True
-ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1']
+ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,8 +47,7 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.app'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
