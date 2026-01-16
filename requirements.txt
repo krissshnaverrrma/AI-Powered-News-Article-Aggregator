@@ -3,6 +3,7 @@ requests
 beautifulsoup4
 groq
 python-dotenv
-psycopg2-binary
 vercel
 gunicorn
+psycopg2-binary
+dj-database-url
