@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "AI-Powered-News--Article-Aggregator/core/wsgi.py",
+      "src": "core/wsgi.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
     }
@@ -10,11 +10,11 @@
   "routes": [
     {
       "src": "/static/(.*)",
-      "dest": "AI-Powered-News--Article-Aggregator/static/$1"
+      "dest": "/static/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "AI-Powered-News--Article-Aggregator/core/wsgi.py"
+      "dest": "core/wsgi.py"
     }
   ]
 }
